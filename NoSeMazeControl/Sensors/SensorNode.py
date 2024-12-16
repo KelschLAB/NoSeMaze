@@ -157,7 +157,11 @@ class sensornode:
         else:
             tmp = -1
         res["mics"]= {"timestamp" : tmp,
-                    "nh3" : int(split_str[9], 16)}
+                    "nh3" : int(split_str[9], 16),
+                    "nh3_tempcomp" : int(split_str[14], 16),
+                    "nh3_ppm" : int(split_str[15], 16)
+                    }
+    
         
         if(int(split_str[10], 16) != 0):
             tmp =  timestamp_os + (t0 - int(split_str[10], 16))

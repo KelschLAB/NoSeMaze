@@ -196,7 +196,13 @@ class MeasObj:
             if res["mics"]["timestamp"] != -1:  # check if new data is available
                 filename = csv_file_paths["mics"]
                 self.write_csv_row_to_file(
-                    filename, [res["mics"]["timestamp"], res["mics"]["nh3"]]
+                    filename, [
+                        res["mics"]["timestamp"], 
+                        res["mics"]["nh3"],
+                        res["mics"]["nh3_tempcomp"],
+                        res["mics"]["nh3_ppm"],
+                        
+                        ]
                 )
         
             results_list.append(res)
