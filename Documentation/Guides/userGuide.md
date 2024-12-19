@@ -13,6 +13,7 @@ This documentation is meant to help user navigate the [_NoSeMazeControl_](#nosem
   - [Animals Window](#nsc-animals-window)
   - [Analysis Window](#nsc-analysis-window)
   - [Video Control Window](#nsc-video-control-window)
+  - [Viewing Sensornode Data](#data-window)
 - [Experiment Flowchart](#experiment-flowchart)
 
 ### Introduction {#introduction-nsc}
@@ -238,6 +239,17 @@ Number of channels used. This parameter will be used to prepare the data contain
 ##### NI USB 6216 Check Box [3]
 
 Checkbox parameter which indicate that if NI USB 6216 BNC is used or not. In the current version, only NI USB 6216 is supported. The checkbox should be checked.
+
+### Viewing Sensornode Data {#data-window}
+
+If you wish to use the sensornode modules, the received data can be viewed via the Data Viewer. To set up one or multiple Nodes, click Sensornodes->Configure IDs. This will open the "Sensor Serial Configuration" window.
+You can now type in the ID you wish to assign to the sensornode at the respective COM Port the USB is connected to. Add the pairs and finish by clicking "Connect". Alternatively, if only one sensornode is connected you can skip this step by directly going to Sensornodes->Data Viewer. Starting the "Sensornode Data Viewer" will start reading the sensor data and plotting them in the viewer. The data viewer will also automatically safe all data records under NoSeMazeControl/csv/SNID_0x.
+
+![Sensornode Tab](../_images/Sensornodes_tab.PNG)
+
+At the current state the data viewer should look similar to the image below. Please be aware that not all sensors transmit data at the same time. Sampling time varies between a couple seconds and a few minutes. Calculed VOC values will take the longest to plot as many samplings are needed for an accurate measurement.
+
+![Data Viewer](../_images/data_viewer.PNG)
 
 #### Animals Window {#nsc-animals-window}
 

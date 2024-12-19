@@ -87,15 +87,14 @@ The tube test consists of:
 The RFID antennae are placed like shown in figure 7. Then, the anntennae are connected to their RFID decoder respectively. Here we use 4 RFID decoder for each antenna which are daisy chained using RS485 protocoll. The end of the daisy chain is RFID decoder 4 and the start of the chain is RFID decoder 1. Then RFID decoder is connected to an RS485/USB adapter, which itself is connected to the computer via USB. A separate UI from the rfid decoder vendors was provided to record all timestamps and RFID tag read from the antenna.
 
 ## Environment Sensor Module
+The environment sensor modules are ideally placed on the side walls of the feeding and nesting areas.
+The modules are connected to the laptop via USB. It comes with following sensors: ALS, NH3, CO2, temperature, humidity, sound aswell as VOC index values. All sensor values can be read via the user interface in the sensor data tab. The graphic below shows their communication connection.
 
-The environment sensor module is placed above on a side wall feeding and nesting area (name of areas as indicated in figure 7). The module is connected via USB to a laptop which runs the UI provided from Fraunhofer Institute to records the data.
+![Sensor Node](/Documentation/_images/Blockschaltbild_Umweltsensorik.PNG)
 
-```mermaid
-flowchart LR
-    M[sensor\nmodule]
-    L[laptop\UI]
-    M --- |USB| L  
-```
+The data output can be plotted via the Sensornode Data Viewer. Please check the Data Viewer section of the [User Guide](./userGuide.md) for a more detailed explaination on how to visualize data received by the modules.
+
+For a more detailed report on the Sensornode module itself please check [Sensornode Module](./sensornode.md).
 
 ## Video Cameras for Analysis with Video Tracking
 
