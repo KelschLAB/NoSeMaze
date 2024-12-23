@@ -16,3 +16,4 @@ Over time, some of the sensors might lose accuracy in their measurements. Especi
 2. High temperatures. When temperatures differ far from the range of 18°C to 28°C, the accuracy of the ammonia sensor might be compromised.
 3. High humidity. While it doesn't affect the ammonia sensor as much as temperature, it can still play a role in measurement deviations.
 4. High flow rate past the sensors. Both the CO2 sensor and the ammonia sensor will be affected when exposed to a much higher flow rate. When the modules are installed as recommended, this shouldn't be a problem.
+
