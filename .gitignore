@@ -16,11 +16,23 @@
 **/hardware.config
 
 # ignoring virtual environment
+=======
 .venv/
 venv/
 
 # ignoring sphinx build files
 sphinxDoc/build/
 
-**/csv
-messages/
+# ignoring csv files
+*.csv
+
+
+# ignoring txt files
+*.txt
+
+*.nosemaze
+
+*.schedule
+
+NoSeMazeControl/build/
+NoSeMazeControl/dist/

@@ -26,7 +26,7 @@ import webbrowser
 import pickle
 import datetime
 import numpy as np
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore, QtGui
 
 from Designs import mainWindow
 from Windows import AppWindows
@@ -71,6 +71,9 @@ class MainApp(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
     mail_window : instance of AppWindows.MailWindow class
         Mail window to input the mailing list.
 
+    sensors_window : instance of AppWindows.SensorsWindow class
+        Window to display sensornode data
+
     control_window : instance of AppWindows.ControlWindow class
         Control window which shows video feed of usb cameras connected. Currently not maintained.
 
@@ -106,23 +109,44 @@ class MainApp(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
         self.analysis_window : AppWindows.AnalysisWindow = None
         self.mail_window : NoneType = None
         self.control_window : AppWindows.ControlWindow = None
+        self.sensors_window : AppWindows.SensorsWindow = None
+        self.sensor_config_window : AppWindows.SensorConfigWindow = None
+        self.schedules_window : AppWindows.SensorConfigWindow = None
+
         self.setup_experiment_bindings(Experiment.Experiment())
 
         # binding functions to the signals
         self.actionAnimal_List.triggered.connect(self.open_animal_window)
-        self.actionHardware_Preferences.triggered.connect(
-            self.open_hardware_window)
-        self.actionAnalyse_Experiment.triggered.connect(
-            self.open_analysis_window)
+        self.actionHardware_Preferences.triggered.connect(self.open_hardware_window)
+        self.actionAnalyse_Experiment.triggered.connect(self.open_analysis_window)
+        self.actionSchedules.triggered.connect(self.open_schedules_window)
+        self.actionView_Data.triggered.connect(self.open_sensor_viewer)
+        self.actionConfigure_IDs.triggered.connect(self.open_sensor_config_viewer)
+
         self.actionMailing_List.triggered.connect(self.open_mail_window)
         self.actionMessage_Folder.triggered.connect(self.set_message_folder_path)
         self.actionVideo_Control.triggered.connect(self.open_control_window)
-        self.actionOpenUserGuide.triggered.connect(self.open_user_guide)
+        self.actionOpen_User_Guide.triggered.connect(self.open_user_guide)
         self.actionAbout.triggered.connect(self.show_about)
         self.actionSave_Experiment.triggered.connect(self.save_experiment)
         self.actionLoad_Experiment.triggered.connect(self.load_experiment)
         self.saved.connect(self.experiment_saved)
 
+    def start_experiment(self):
+        self.experiment_control.start()
+        self.startButton.setEnabled(False)  # Gray out start button
+        self.startButton.setStyleSheet("border-radius: 4px; border-color: green; background-color: lightgray;")  # Inactive style
+        self.stopButton.setEnabled(True)     # Enable stop button
+        self.stopButton.setStyleSheet("border-radius: 4px; border-color: green; background-color: rgb(255, 168, 165);")  # Active style
+
+    def stop_experiment(self):
+        self.experiment_control.stop()
+        self.stopButton.setEnabled(False)    # Gray out stop button
+        self.stopButton.setStyleSheet("border-radius: 4px; border-color: green; background-color: lightgray;")  # Inactive style
+        self.startButton.setEnabled(True)     # Enable start button
+        self.startButton.setStyleSheet("border-radius: 4px; border-color: green; background-color: lightgreen;")  # Active style
+        
+        
     def setup_experiment_bindings(self, experiment : Experiment.Experiment):
         """
         Set up experiment in the GUI and populate the experiment table in the GUI.
@@ -154,9 +178,14 @@ class MainApp(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
             self.stopButton.disconnect()
         except:
             pass
-        self.startButton.clicked.connect(self.experiment_control.start)
-        self.stopButton.clicked.connect(self.experiment_control.stop)
-
+        
+        self.startButton.clicked.connect(self.start_experiment)
+        self.stopButton.clicked.connect(self.stop_experiment)
+        
+        # Initially set the stop button to be grayed out
+        self.stopButton.setEnabled(False)
+        self.stopButton.setStyleSheet("border-radius: 4px; border-color: green; background-color: lightgray;")
+        
         self.hardware_window.new_pref.connect(
             self.experiment_control.update_pref)
 
@@ -220,8 +249,9 @@ class MainApp(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
         in current version. Open message box notifying about deprecation
         notice instead.
         """
-        QtWidgets.QMessageBox(self, "Deprecation Notice",
-                              "E-Mailing function is deprecated\nand not implemented in current version.")
+        #QtWidgets.QMessageBox(self, "Deprecation Notice",
+         #                     "E-Mailing function is deprecated\nand not implemented in current version.")
+         
         # Implementation of open_mail_window are commented out below
         # for archive purpose, in case there is a need to have
         # e-mailing implementation again
@@ -236,6 +266,21 @@ class MainApp(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
         self.analysis_window = AppWindows.AnalysisWindow(
             self.experiment, parent=self)
         self.analysis_window.show()
+
+    def open_schedules_window(self):
+        """Open scheduling window."""
+        self.schedules_window = AppWindows.SchedulesWindow(parent=self)
+        self.schedules_window.show()
+
+    def open_sensor_viewer(self):
+        """Open sensor viewer window."""
+        self.sensors_window = AppWindows.SensorsWindow(parent=self)
+        self.sensors_window.show()
+        
+    def open_sensor_config_viewer(self):
+        """Open sensor config window."""
+        self.sensor_config_window = AppWindows.SensorConfigWindow()
+        self.sensor_config_window.show()
 
     def update_trial_view(self):
         """Update graph view of the trial if a trial is executed."""
@@ -454,7 +499,13 @@ class MainApp(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
             self.mail_window.close()
         if self.control_window is not None:
             self.control_window.close()
-
+        if self.sensors_window is not None:
+            self.sensors_window.close()
+        if self.sensor_config_window is not None:
+            self.sensor_config_window.close()
+        if self.schedules_window is not None:
+            self.schedules_window.close()
+            
     def closeEvent(self, event : QtCore.QEvent):
         """Things to be executed if closeEvent occured (x in main window is clicked).
         
@@ -521,6 +572,21 @@ sys.excepthook = my_exception_hook
 def main():
     """Main method to be called."""
     app = QtWidgets.QApplication(sys.argv)
+    
+        # Set the global palette for a modern clean design
+    palette = QtGui.QPalette()
+    palette.setColor(QtGui.QPalette.Window, QtGui.QColor("white"))  # Set the window background color to white
+    palette.setColor(QtGui.QPalette.WindowText, QtGui.QColor("black"))  # Set the window text color to black
+    # Set other palette colors as needed for a clean design
+    palette.setColor(QtGui.QPalette.Base, QtGui.QColor("white"))  # Background color for text entry widgets
+    palette.setColor(QtGui.QPalette.Text, QtGui.QColor("black"))  # Text color for text entry widgets
+    palette.setColor(QtGui.QPalette.Button, QtGui.QColor("white"))  # Button background color
+    palette.setColor(QtGui.QPalette.ButtonText, QtGui.QColor("black"))  # Button text color
+    palette.setColor(QtGui.QPalette.Highlight, QtGui.QColor("#0078d7"))  # Highlight color for selected items
+    palette.setColor(QtGui.QPalette.HighlightedText, QtGui.QColor("white"))  # Text color for selected items
+    
+    app.setPalette(palette)
+    
     form = MainApp()
     form.show()
     sys.exit(app.exec_())

@@ -31,9 +31,9 @@ License along with NoSeMaze. If not, see https://www.gnu.org/licenses.
 from PyQt5 import QtWidgets
 import numpy as np
 
-from ScheduleDesigns import NoSeMazeScheduleDesign
-from Generation import Gen
-import Exceptions as e
+from Schedule.Designs import NoSeMazeScheduleDesign
+from Schedule.Generation import Gen
+import Schedule.Exceptions as e
 
 # import for type hinting
 # TODO: type hinting parentUI as MainApp. Circular import issue occured.
@@ -156,7 +156,7 @@ class NoSeMazeScheduleWidget(QtWidgets.QWidget, NoSeMazeScheduleDesign.Ui_Form):
                      'pulse_delay': 0.0,
                      'fromLength': False,
                      'fromRepeats': True,
-                     'repeats': 1,
+                     'repeats': 0,
                      'length': 0.0,
                      'isClean': True,
                      'onset': onset,

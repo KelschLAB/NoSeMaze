@@ -1,6 +1,6 @@
 """
 This module contains all implementation of windows in UI. There are adjustment
-window, hardware window, control window, animal window, e-mail window and 
+window, hardware window, control window, animal window, e-mail window, sensors window and 
 analysis window.
 """
 """
@@ -26,11 +26,30 @@ import pickle
 import os
 import numpy as np
 import datetime
+import sys
+import pyqtgraph as pg
+import webbrowser
+import inspect
+from types import NoneType, TracebackType
+import traceback
+from typing import Type
 
 from PyQt5 import QtWidgets, QtMultimedia, QtCore
-from PyQt5.QtCore import pyqtSignal, Qt
-from Designs import adjustmentWidget, animalWindow, hardwareWindow, prefsWindow, analysisWindow, mailWindow, controlWindow
+from PyQt5.QtCore import pyqtSignal, Qt, QThread
+from Designs import adjustmentWidget, animalWindow, hardwareWindow, prefsWindow, analysisWindow, mailWindow, controlWindow, sensorsWindow, scheduleMainWindow
 from Models import GuiModels
+from Schedule.Models import ScheduleWidgets, ScheduleView, Widgets
+from Schedule.UI import ColorMap
+from Schedule.PyPulse import PulseInterface
+from Schedule.Exceptions import RewardMapError
+from queue import Queue
+
+
+from Sensors.MyWorker import MeasurementWorker, PlotWorker
+from Sensors.PlotControl import plotter
+from Sensors import constants
+from Sensors.SerialConfiguration import configure_serial, close_serial
+
 from Analysis import Analysis
 
 # importing for type hinting
@@ -38,8 +57,10 @@ import typing
 from main import MainApp
 from Models import Experiment
 
+
 # TODO: Type hinting ControlWindow as parent of AdjustmentWidget.
 # TODO: Also describe attributes of all classes instead of only type hinting?
+
 
 
 class AdjustmentWidget(QtWidgets.QDockWidget, adjustmentWidget.Ui_DockWidget):
@@ -191,44 +212,52 @@ class ControlWindow(QtWidgets.QMainWindow, controlWindow.Ui_MainWindow):
                 if settings['cam1']['pos'] is not None:
                     key = settings['cam1']['pos']
                     self.settings['cam1']['pos'] = key
-                    self.set_cam1(self.cameras_pos[key])
-                    self.settings['cam1']['saturation'] = settings['cam1']['saturation']
-                    self.settings['cam1']['brightness'] = settings['cam1']['brightness']
-                    self.settings['cam1']['contrast'] = settings['cam1']['contrast']
-                    self.camOne.imageProcessing().setBrightness(
-                        settings['cam1']['brightness'])
-                    self.camOne.imageProcessing().setSaturation(
-                        settings['cam1']['saturation'])
-                    self.camOne.imageProcessing().setContrast(
-                        settings['cam1']['contrast'])
                     try:
-                        self.settings['cam1']['res_x'] = settings['cam1']['res_x']
-                        self.settings['cam1']['res_y'] = settings['cam1']['res_y']
-                        self.set_res_cam1(
-                            settings['cam1']['res_x'], settings['cam1']['res_y'])
-                    except:
+                        self.set_cam1(self.cameras_pos[key])
+                    except KeyError:
                         pass
+                    else:
+                        self.settings['cam1']['saturation'] = settings['cam1']['saturation']
+                        self.settings['cam1']['brightness'] = settings['cam1']['brightness']
+                        self.settings['cam1']['contrast'] = settings['cam1']['contrast']
+                        self.camOne.imageProcessing().setBrightness(
+                            settings['cam1']['brightness'])
+                        self.camOne.imageProcessing().setSaturation(
+                            settings['cam1']['saturation'])
+                        self.camOne.imageProcessing().setContrast(
+                            settings['cam1']['contrast'])
+                        try:
+                            self.settings['cam1']['res_x'] = settings['cam1']['res_x']
+                            self.settings['cam1']['res_y'] = settings['cam1']['res_y']
+                            self.set_res_cam1(
+                                settings['cam1']['res_x'], settings['cam1']['res_y'])
+                        except:
+                            pass
             if cam == 'cam2':
                 if settings['cam2']['pos'] is not None:
                     key = settings['cam2']['pos']
                     self.settings['cam2']['pos'] = key
-                    self.set_cam2(self.cameras_pos[key])
-                    self.settings['cam2']['saturation'] = settings['cam2']['saturation']
-                    self.settings['cam2']['brightness'] = settings['cam2']['brightness']
-                    self.settings['cam2']['contrast'] = settings['cam2']['contrast']
-                    self.camTwo.imageProcessing().setBrightness(
-                        settings['cam2']['brightness'])
-                    self.camTwo.imageProcessing().setSaturation(
-                        settings['cam2']['saturation'])
-                    self.camTwo.imageProcessing().setContrast(
-                        settings['cam2']['contrast'])
                     try:
-                        self.settings['cam2']['res_x'] = settings['cam2']['res_x']
-                        self.settings['cam2']['res_y'] = settings['cam2']['res_y']
-                        self.set_res_cam2(
-                            settings['cam2']['res_x'], settings['cam2']['res_y'])
-                    except:
+                        self.set_cam2(self.cameras_pos[key])
+                    except KeyError:
                         pass
+                    else:                    
+                        self.settings['cam2']['saturation'] = settings['cam2']['saturation']
+                        self.settings['cam2']['brightness'] = settings['cam2']['brightness']
+                        self.settings['cam2']['contrast'] = settings['cam2']['contrast']
+                        self.camTwo.imageProcessing().setBrightness(
+                            settings['cam2']['brightness'])
+                        self.camTwo.imageProcessing().setSaturation(
+                            settings['cam2']['saturation'])
+                        self.camTwo.imageProcessing().setContrast(
+                            settings['cam2']['contrast'])
+                        try:
+                            self.settings['cam2']['res_x'] = settings['cam2']['res_x']
+                            self.settings['cam2']['res_y'] = settings['cam2']['res_y']
+                            self.set_res_cam2(
+                                settings['cam2']['res_x'], settings['cam2']['res_y'])
+                        except:
+                            pass
 
     def get_cam1(self):
         key, okPressed = QtWidgets.QInputDialog.getItem(
@@ -665,6 +694,7 @@ class HardwareWindow(QtWidgets.QMainWindow, hardwareWindow.Ui_MainWindow):
         self.saved.connect(self.saved_status)
 
         self.analogInputEdit.textEdited.connect(self.change)
+        self.digitalInputEdit.textEdited.connect(self.change)
         self.analogChannelsSpin.valueChanged.connect(self.change)
         self.odourOutputEdit.textEdited.connect(self.change)
         self.syncClockEdit.textEdited.connect(self.change)
@@ -675,17 +705,15 @@ class HardwareWindow(QtWidgets.QMainWindow, hardwareWindow.Ui_MainWindow):
         self.samplingRateEdit.textEdited.connect(self.change)
         self.lickChannelSpin.valueChanged.connect(self.change)
         self.timeoutEdit.textEdited.connect(self.change)
-        self.beamChannelSpin.valueChanged.connect(self.change)
+        self.beamChannelEdit.textEdited.connect(self.change)
         self.lickChannel2Spin.valueChanged.connect(self.change)
-        self.analogInput3Spin.valueChanged.connect(self.change)
-        self.usbBox.stateChanged.connect(self.change)
         self.fvDelayEdit.textEdited.connect(self.change)
-        self.thoraxMonitorDelayEdit.textEdited.connect(self.change)
         self.lickMonitorDelayEdit.textEdited.connect(self.change)
         self.lickrateEdit.textEdited.connect(self.change)
 
     def set_preferences(self, prefs):
         self.analogInputEdit.setText(prefs['analog_input'])
+        self.digitalInputEdit.setText(prefs['digital_input'])
         self.analogChannelsSpin.setValue(prefs['analog_channels'])
         self.odourOutputEdit.setText(prefs['odour_output'])
         self.syncClockEdit.setText(prefs['sync_clock'])
@@ -696,13 +724,9 @@ class HardwareWindow(QtWidgets.QMainWindow, hardwareWindow.Ui_MainWindow):
         self.samplingRateEdit.setText(str(prefs['samp_rate']))
         self.lickChannelSpin.setValue(prefs['lick_channel_l'])
         self.timeoutEdit.setText(str(prefs['timeout']))
-        self.beamChannelSpin.setValue(prefs['beam_channel'])
+        self.beamChannelEdit.setText(prefs['beam_channel'])
         self.lickChannel2Spin.setValue(prefs['lick_channel_r'])
-        self.analogInput3Spin.setValue(prefs['analog_input_3'])
-        self.usbBox.setChecked(prefs['static'])
         self.fvDelayEdit.setText(str(prefs['fv_delay']))
-        self.thoraxMonitorDelayEdit.setText(
-            str(prefs['thorax_delay']))  # TODO Namen ändern
         self.lickMonitorDelayEdit.setText(
             str(prefs['lick_delay']))  # TODO Namen ändern
         self.lickrateEdit.setText(str(prefs['low_lickrate']))
@@ -719,6 +743,7 @@ class HardwareWindow(QtWidgets.QMainWindow, hardwareWindow.Ui_MainWindow):
 
         try:
             prefs = {'analog_input': self.analogInputEdit.text(),
+                     'digital_input': self.digitalInputEdit.text(),
                      'analog_channels': int(self.analogChannelsSpin.value()),
                      'odour_output': self.odourOutputEdit.text(),
                      'reward_output1': self.rewardOutput1Edit.text(),
@@ -727,17 +752,15 @@ class HardwareWindow(QtWidgets.QMainWindow, hardwareWindow.Ui_MainWindow):
                      'finalvalve_output': self.fvOutputEdit.text(),
                      'rfid_port': self.rfidPortEdit.text(),
                      'samp_rate': int(self.samplingRateEdit.text()),
-                     'lick_channel': int(self.lickChannelSpin.value()),
                      'timeout': int(self.timeoutEdit.text()),
-                     'beam_channel': int(self.beamChannelSpin.value()),
+                     'beam_channel': self.beamChannelEdit.text(),
                      'lick_channel_l': int(self.lickChannelSpin.value()),
                      'lick_channel_r': int(self.lickChannel2Spin.value()),
-                     'analog_input_3': int(self.analogInput3Spin.value()),
-                     'static': bool(self.usbBox.isChecked()),
                      'fv_delay': float(self.fvDelayEdit.text()),
-                     'thorax_delay': float(self.thoraxMonitorDelayEdit.text()),
                      'lick_delay': float(self.lickMonitorDelayEdit.text()),
-                     'low_lickrate': float(self.lickrateEdit.text())}
+                     'low_lickrate': float(self.lickrateEdit.text()),
+                     'static': True}
+
         except ValueError:
             QtWidgets.QMessageBox.about(self.parent, "Error",
                                         "A value error has occured")
@@ -938,3 +961,375 @@ class AnalysisWindow(QtWidgets.QMainWindow, analysisWindow.Ui_MainWindow):
             return animal
         except:
             return None
+        
+
+
+
+
+class SchedulesWindow(QtWidgets.QMainWindow, scheduleMainWindow.Ui_MainWindow):
+    """The MainApp of schedule generator UI. Inherits QMainWindow
+    and uses design from mainDesign.
+
+    Attributes
+    ----------
+    parent : NoneType
+        Parent of the main window. MainApp does not have a parent widget.
+
+    current_schedule_type : QWidget
+        Current schedule type chosen in drop down menu.
+    
+    schedule : dict
+        Schedule created.
+    
+    schedule_headers : list
+        Header of the schedule.
+    
+    generated : bool, default=False
+        Status if schedule is generated.
+
+    schedule_types : dict
+        Types of schedules available.
+    """
+
+    def __init__(self, parent : NoneType = None):
+        super(self.__class__, self).__init__()
+        self.setupUi(self)
+        self.parent = parent
+
+        self.current_schedule_type : str = None
+        self.schedule : dict = dict()
+        self.schedule_headers : list = []
+        self.generated : bool= False
+
+        # add the valence map
+        self.valence_map : Widgets.ValveMapWidget = Widgets.ValveMapWidget(self.valveMapContents)
+        self.valveMapContents.layout().addWidget(self.valence_map)
+
+        # populate schedule types
+        self.schedule_types = dict()
+        for name, obj in inspect.getmembers(ScheduleWidgets):
+            if inspect.isclass(obj):
+                self.scheduleTypesCombo.addItem(name)
+                self.schedule_types[name] = obj
+
+        # initialise schedule model
+        self.scheduleView.setModel(ScheduleView.ScheduleModel([], [[]]))
+
+        # select first schedule widget
+        self.select_schedule_type()
+
+        # add function bindings
+        self.actionSave.triggered.connect(self.save_schedule)
+        self.actionOpenUserGuide.triggered.connect(self.open_user_guide)
+        self.actionAbout.triggered.connect(self.show_about)
+        self.generateScheduleButton.clicked.connect(self.generate)
+        self.scheduleTypesCombo.activated.connect(self.select_schedule_type)
+        self.scheduleView.selectionModel().selectionChanged.connect(self.draw_pulse)
+
+    def generate(self):
+        """Slot for generating schedule if generate button is clicked."""
+
+        try:
+            # get the schedule data and headers
+            self.schedule, self.schedule_headers = self.current_schedule_type.generate_schedule(
+                self.valence_map.get_valence_map())
+        except RewardMapError:
+            # Known error. Catch error here to avoid showing error message the 2nd time.
+            pass
+        except Exception as e:
+            # Show exception and traceback in an error window if error has occured
+            eStr = "".join(traceback.format_exception(e))
+            QtWidgets.QMessageBox.about(
+                self.parent, "Error", "An error has occured.\n\n{}".format(eStr))
+        else:
+            # Post to the schedule view
+            self.schedule_model = ScheduleView.ScheduleModel(
+                self.schedule_headers, self.schedule, parent=self)
+            self.scheduleView.setModel(self.schedule_model)
+            self.scheduleView.selectionModel().selectionChanged.connect(self.draw_pulse)
+            self.generated = True
+            QtWidgets.QMessageBox.about(
+                self.parent, "Schedule", "Schedule is generated!")
+
+    def select_schedule_type(self):
+        """Slot for updating schedule view if a schedule type is selected."""
+
+        self.generated = False
+        schedule_name = self.scheduleTypesCombo.currentText()
+
+        if self.current_schedule_type is not None:
+            self.scheduleParamsContents.layout().removeWidget(self.current_schedule_type)
+            self.current_schedule_type.deleteLater()
+
+        self.current_schedule_type = self.schedule_types[schedule_name]()
+        self.scheduleParamsContents.layout().addWidget(self.current_schedule_type)
+
+        self.scheduleView.setModel(ScheduleView.ScheduleModel([], [[]]))
+
+    def draw_pulse(self):
+        """Slot for drawing or redrawing pulse in UI if a new trial is selected."""
+
+        trial = self.schedule[self.scheduleView.selectionModel().selectedRows()[
+            0].row()]
+        params = self.current_schedule_type.pulse_parameters(trial)
+
+        pulses, t = PulseInterface.make_pulse(1000.0, 0.0, 0.0, params)
+
+        self.pulseView.plotItem.clear()
+        for p, pulse in enumerate(pulses):
+            color = ColorMap.c_list[self.valence_map.get_valence_map()[p]]
+            self.pulseView.plotItem.plot(
+                t, np.array(pulse) - (p*1.1), pen=color)
+
+    def save_schedule(self):
+        """Slot for saving schedule as .schedule"""
+
+        if self.generated:
+            params = list()
+            for trial in self.schedule:
+                params.append(
+                    self.current_schedule_type.pulse_parameters(trial))
+
+            fname, suff = QtWidgets.QFileDialog.getSaveFileName(
+                self, "Save Schedule", '', "Schedule File (*.schedule)")
+            try:
+                with open(fname, 'wb') as fn:
+                    pickle.dump({'schedule': self.schedule,
+                                 'headers': self.schedule_headers,
+                                 'params': params}, fn)
+            except:
+                #QtWidgets.QMessageBox.about(self.parent,"Error","An error has occurred")
+                pass
+        else:
+            QtWidgets.QMessageBox.about(
+                self.parent, "Error", "Schedule is not yet generated!")
+
+    def open_user_guide(self):
+        """Open User Guide. If there is no user guide locally available, 
+        open the user guide in Github.
+        """
+
+        def _open_file_in(dPath):
+            """Check if file is available. If yes, then open file
+            in default apps. Return true, if file is available; else 
+            return false.
+            """
+            isFile = os.path.isfile(dPath)
+            if isFile:
+                os.startfile(dPath)
+
+            return isFile
+
+        # Relative path to user guide document.
+        docsPath = "Documentation/Guides/userGuide.pdf"
+        dPath = "../" + docsPath
+        # If file not found, assuming current working directory is NoSeMazeSchedule
+        if not _open_file_in(dPath):
+            dPath = "./" + docsPath
+            # If file not found, assuming current working directory is NoSeMaze
+            if not _open_file_in(dPath):
+                webbrowser.open(
+                    "https://github.com/KelschLAB/NoSeMaze/blob/master/Documentation/Guides/userGuide.md#nosemazeschedule")
+
+    def show_about(self):
+        """Show the *about* message."""
+
+        msgBox = QtWidgets.QMessageBox()
+        msgBox.setIcon(QtWidgets.QMessageBox.Information)
+        msgBox.setTextFormat(QtCore.Qt.TextFormat.RichText)
+        msgBox.setWindowTitle("About")
+        msgBox.setText(
+            "<html><strong style=\"font-size:18px\">NoSeMaze Scheduler v1.0</strong>")
+        infText = ("<html><em style=\"font-size:14px\">NoSeMaze Scheduler</em> is part of <em>NoSeMaze</em>." +
+                   "<br /><div style=\"font-size:14px;white-space:nowrap\">NoSeMaze&nbsp;&nbsp;Copyright (c) 2019, 2022&nbsp;&nbsp;\"name of author(s)\"</div>" +
+                   "<div style=\"font-size:14px;white-space:wrap;text-align:justify;text-justify:inter-word\">This program comes with ABSOLUTELY NO WARRANTY. " +
+                   "This is free software, and you are welcome to redistribute it under certain conditions. " +
+                   "Click <em style=\"white-space:nowrap\">Show Details...</em> below for more details.</div>")
+        msgBox.setInformativeText(infText)
+        detText = ("NoSeMaze is free software: you can redistribute it and/or " +
+                   "modify it under the terms of GNU General Public License as " +
+                   "published by the Free Software Foundation, either version 3 " +
+                   "of the License, or (at your option) at any later version.\n\n" +
+
+                   "NoSeMaze is distributed in the hope that it will be useful, " +
+                   "but WITHOUT ANY WARRANTY; without even the implied warranty " +
+                   "of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. " +
+                   "See the GNU General Public License for more details.")
+        msgBox.setDetailedText(detText)
+        msgBox.exec()
+
+
+# Back up the reference to the exceptionhook
+sys._excepthook = sys.excepthook
+
+
+def my_exception_hook(exctype: Type[BaseException], value: BaseException, traceback: TracebackType):
+    """Custom exception hook.
+
+    Parameters
+    ----------
+    exctype : type of exception
+        Type of exception catch.
+    value : BaseException
+        Exception catched.
+    traceback : TracebackType
+        Traceback associated with the exception.
+    """
+    # Print the error and traceback
+    print(exctype, value, traceback)
+    # Call the normal Exception hook after
+    sys._excepthook(exctype, value, traceback)
+    sys.exit(1)
+
+
+# Set the exception hook to our wrapping function
+sys.excepthook = my_exception_hook
+
+
+# Main Window of the application
+class SensorsWindow(QtWidgets.QMainWindow, sensorsWindow.Ui_MainWindow):
+    """PyQt window to display sensor node data
+    """
+
+    def __init__(self, parent : MainApp = None):
+        QtWidgets.QMainWindow.__init__(self, parent)
+
+        self.setWindowTitle("NoseMaze II")
+
+        self.parent = parent
+        self.setupUi(self)
+
+        self.initalize_workers()
+
+        # Connect buttons to start and stop the worker
+        self.bu_start.clicked.connect(self.start_worker)
+        self.bu_stop.clicked.connect(self.stop_worker)
+
+
+    def initalize_workers(self):
+        """Method to create two workers and their pyqt threads:
+        worker 1 recieves the measurement data from the sensornodes.
+        worker 2 plots the measurement data.
+        """
+        # Create a new worker == pseudo thread
+        self.worker = MeasurementWorker()
+        self.plot_worker = PlotWorker(self.graphicsView, self.label_NH3)
+
+        self.worker_thread = QThread()
+        self.plot_thread = QThread()
+
+        # Move worker to thread
+        self.worker.moveToThread(self.worker_thread)
+        self.plot_worker.moveToThread(self.plot_thread)
+
+        self.plot_thread.start()
+
+        # Connect signals
+        self.worker_thread.started.connect(self.worker.start)
+        self.worker.finished.connect(self.worker_thread.quit)
+
+        # Connect the worker's signal to the plot workers slot
+        self.worker.measurementsReady.connect(self.plot_worker.plotMeasurement)
+        self.worker.gravityReady.connect(self.plot_worker.displayNH3)
+    
+    def start_worker(self):
+
+        if self.worker_thread.isRunning():
+            self.worker.start()
+        else:
+            self.worker_thread.start()
+
+        self.bu_start.setEnabled(False)
+        self.bu_stop.setEnabled(True)
+
+
+    def stop_worker(self, abandon):
+        if self.worker_thread.isRunning():
+            self.worker.stop(abandon)   
+            self.bu_stop.setEnabled(False)
+            self.bu_start.setEnabled(True)
+
+    def closeEvent(self, event):
+        print("Shutting down")
+        self.stop_worker(abandon=True)
+
+        
+        
+class SensorConfigWindow(QtWidgets.QWidget):
+    """PyQt window to configure the sensornode ids
+    """
+    def __init__(self):
+        super().__init__()
+
+
+        self.init_ui()
+
+    def init_ui(self):
+        main_layout = QtWidgets.QVBoxLayout()
+
+        # Window layout
+        input_layout = QtWidgets.QHBoxLayout()
+        self.sensor_input = QtWidgets.QLineEdit(self)
+        self.com_input = QtWidgets.QLineEdit(self)
+        self.add_pair_button = QtWidgets.QPushButton('Add Pair', self)
+        self.add_pair_button.clicked.connect(self.add_sensor_com_pair)
+        input_layout.addWidget(QtWidgets.QLabel('Sensor ID:'))
+        input_layout.addWidget(self.sensor_input)
+        input_layout.addWidget(QtWidgets.QLabel('COM Port:'))
+        input_layout.addWidget(self.com_input)
+        input_layout.addWidget(self.add_pair_button)
+
+        # List to display the ID/COM pairs
+        self.pair_list_widget = QtWidgets.QListWidget(self)
+
+        # Button to remove the pairs
+        self.clear_list_button = QtWidgets.QPushButton('Clear List', self)
+        self.clear_list_button.clicked.connect(self.clear_list)
+
+        # Button to configure the sensor IDs
+        self.configure_button = QtWidgets.QPushButton('Connect', self)
+        self.configure_button.clicked.connect(self.configure_sensors)
+
+        # Add the widgets to the layout
+        main_layout.addLayout(input_layout)
+        main_layout.addWidget(self.pair_list_widget)
+        main_layout.addWidget(self.clear_list_button)
+        main_layout.addWidget(self.configure_button)
+
+        self.setLayout(main_layout)
+        self.setWindowTitle('Sensor Serial Configuration')
+        
+        for sensor_id, com_port in constants.sensor_com_pairs:
+            self.pair_list_widget.addItem(f'Sensor ID: {sensor_id}, COM Port: {com_port}')
+
+
+    def add_sensor_com_pair(self):
+        """Method to add a sensor/com port pair based on user input
+        Appends the input to a list and displays it in a list widget
+        """
+        sensor_id = self.sensor_input.text()
+        com_port = self.com_input.text()
+        # Iterate over the ID\COM, append them to a list and clear the input fields
+        if sensor_id and com_port:
+            pair = (sensor_id, com_port)
+            constants.sensor_com_pairs.append(pair)
+            self.pair_list_widget.addItem(f'Sensor ID: {sensor_id}, COM Port: {com_port}')
+            self.sensor_input.clear()
+            self.com_input.clear()
+        else:
+            QtWidgets.QMessageBox.warning(self, 'Error', 'Please enter both a Sensor ID and a COM Port.')
+
+    def clear_list(self):
+        """Clear the list widget
+        """
+        close_serial()
+        
+        constants.sensor_com_pairs.clear()  # Leere die interne Liste
+        constants.SNIds = [1]
+
+        self.pair_list_widget.clear()  # Leere das List-Widget
+
+    def configure_sensors(self):
+        """Use the input pairs to send the ID commands to the sensors via serial connection
+        """
+        configure_serial()
