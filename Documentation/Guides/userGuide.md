@@ -240,7 +240,7 @@ Number of channels used. This parameter will be used to prepare the data contain
 
 Checkbox parameter which indicate that if NI USB 6216 BNC is used or not. In the current version, only NI USB 6216 is supported. The checkbox should be checked.
 
-### Viewing Sensornode Data {#viewing-sensornode-data}
+### Viewing Sensornode Data
 
 If you wish to use the sensornode modules, the received data can be viewed via the Data Viewer.
 
@@ -258,7 +258,7 @@ At the current state the data viewer should look similar to the image below. Ple
 
 ![Data Viewer](../_images/data_viewer.png)
 
-#### Animals Window {#nsc-animals-window}
+### Animals Window {#nsc-animals-window}
 
 ![animals window](../_images/nscAnimalsWindowIndexed.png)
 

@@ -1,5 +1,14 @@
 # Setup Guide
 
+## Overview
+
+- [Nose Maze Model](#nose-maze-model)
+- [Automatic Olfactometer System](#automatic-alfactometer-system)
+- [Tube Test System](#tube-test-system)
+- [Environment Sensor Module](#environment-sensor-module)
+- [Video Cameras for Analysis with Video Tracking](#video-cameras-for-analysis-with-video-tracking)
+
+## Nose Maze Model
 This documentation is intended to help user have an overview of the setup and how its modules functions. For more details about the hardware used, see the [hardware reference](./hardwareReference.md).
 
 > :exclamation: A step file for example to view a detailed 3D model of NoSeMaze is provided in [HardwareDocumentaion](../HardwareDocumentation/)
@@ -17,6 +26,8 @@ The test area is long narrow corridor with the lick port at the end of the corri
 The upper cabinet is used to place the olfactometer system, except the final valve, the lick sensor and the reward system which are placed in olfactometer test area due to their functionalities.
 
 The lower cabinet is used to place the computer system in exception of the monitor which is placed in olfactometer test area and the keyboard and mouse which are placed in the olfactometer area due to their functionalities.
+
+
 
 ## Automatic Olfactometer System
 
