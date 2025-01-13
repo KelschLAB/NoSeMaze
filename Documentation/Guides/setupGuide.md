@@ -88,9 +88,9 @@ The RFID antennae are placed like shown in figure 7. Then, the anntennae are con
 
 ## Environment Sensor Module
 The environment sensor modules are ideally placed on the side walls of the feeding and nesting areas.
-The modules are connected to the laptop via USB. It comes with following sensors: ALS, NH3, CO2, temperature, humidity, sound aswell as VOC index values. All sensor values can be read via the user interface in the sensor data tab. The graphic below shows their communication connection.
+The modules are connected to the laptop via USB. It comes with following sensors: ALS, NH3, CO2, temperature, humidity and sound aswell as VOC index values. All sensor values can be read via the user interface in the sensor data tab. The graphic below shows their communication connection.
 
-![Sensor Node](/Documentation/_images/Blockschaltbild_Umweltsensorik.PNG)
+![Sensor Node](/Documentation/_images/Blockschaltbild_Umweltsensorik.png)
 
 The data output can be plotted via the Sensornode Data Viewer. Please check the Data Viewer section of the [User Guide](./userGuide.md) for a more detailed explaination on how to visualize data received by the modules.
 
