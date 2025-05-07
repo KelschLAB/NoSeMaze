@@ -98,7 +98,7 @@ class MeasurementWorker(QObject):
                 self.progress.emit(self._count)
 
                 result = self.MeasureObj.meas_loop()
-
+                
                 try:
                     self.measurementsReady.emit(result)
                 except TypeError:
@@ -111,7 +111,7 @@ class MeasurementWorker(QObject):
                     except TypeError:
                         pass
                 
-                QThread.msleep(1000)
+                QThread.msleep(5000)
     
             elif self.abandon == True:
                 try:
