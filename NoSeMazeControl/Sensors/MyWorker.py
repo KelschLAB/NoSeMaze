@@ -101,15 +101,15 @@ class MeasurementWorker(QObject):
                 
                 try:
                     self.measurementsReady.emit(result)
-                except TypeError:
-                    pass
-                
+                except TypeError as e:
+                    print(f"Measurement error: {e}")
+
                 if constants.gravity_port:
                     try:
                         res = self.GravObj.meas_loop()
                         self.gravityReady.emit(res)
-                    except TypeError:
-                        pass
+                    except TypeError as e:
+                        print(f"Gravity measurement error: {e}")
                 
                 QThread.msleep(5000)
     

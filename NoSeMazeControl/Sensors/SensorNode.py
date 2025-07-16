@@ -89,6 +89,7 @@ class sensornode:
                 print("Elapsed time GetID serial connection: {:.2f} ms".format((toc-tic)/1000000))
             self.ser.close()
         except serial.SerialException: #something went wrong maybe a Silicon Lab Bridge not used as SensorNode was present. Capture the exception
+            print("Serial Exception")
             try: #try to close serial connection. This might raise an exception if serial connection was never instanciated (e.g. if connection was already in use)
                 if(self.ser.closed == False):
                     self.ser.close()
@@ -184,9 +185,12 @@ class sensornode:
         for p in ports:
             if "Silicon Labs" in p.description:
                 esp_list.append(p)
+                print(p)
+                print(p.description)
     
         for esp in esp_list:
             tmp_id = self.__getID(esp.device)
+            print(tmp_id)
             if(tmp_id == SNid):
                 working_port = esp.device
                 self.id = tmp_id

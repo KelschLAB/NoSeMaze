@@ -21,6 +21,7 @@ def configure_serial():
             else:
                 constants.gravity_port = com_port
                 print("Opened serial to gravity board")
+                # TODO: Serial port is never closed?
         else:
             # This command sets the ID in the nodes NVS memory
             send_buf = f"SetID 0x{sensor_id}\n"
@@ -35,9 +36,10 @@ def configure_serial():
                         ser.reset_input_buffer()
                         ser.write(send_buf.encode())
                     else:
-                        print("Opened without repeating")
+                        print(f"Tested COM{com_port} succesfully")
                     ser.flush()
                     constants.SNIds.append(int(sensor_id))
+                    ser.close()
 
             except serial.SerialException:
                 print(f"COM Port {com_port} not open")

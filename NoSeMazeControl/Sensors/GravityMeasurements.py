@@ -110,7 +110,7 @@ class GravitySensor:
         try:
             ser = serial.Serial(f"COM{constants.gravity_port}", 115200, timeout=1)
         except serial.serialutil.SerialException:
-            print("Could not open port [{}] with gravity sensor".format(constants.gravity_port))
+            print(f"Could not open port COM{constants.gravity_port} with gravity sensor")
 
         # Send the command 'measure' followed by a newline character
         try:
