@@ -103,9 +103,6 @@ class GravitySensor:
         """
         Method to recieve measurements and write them into their respective csv files
         """
-        measurement = 0
-
-
         # Open the serial port
         try:
             ser = serial.Serial(f"COM{constants.gravity_port}", 115200, timeout=1)
@@ -114,17 +111,38 @@ class GravitySensor:
 
         # Send the command 'measure' followed by a newline character
         try:
-            ser.write(b'measure\n')
+            
+            measurement = 0
+            i = 0
+            send_buf = 'measure\n'
+
+            ser.reset_input_buffer()
+            ser.write(send_buf.encode())
+            ser.flush()
+            
+            measurement = ser.readline().decode('utf-8').rstrip()
 
             # Wait for the measurement
-            while True:
-                if ser.in_waiting > 0:
-                    measurement = float(ser.readline().decode('utf-8').rstrip())
-                    timestamp = datetime.now().timestamp()
+            while (measurement==""):
+                if(i > 5):
+                    print("Failed to get gravity NH3 data, trying again")
+                    measurement = "0.0"
                     break
+                
+                i += 1
+                ser.reset_input_buffer()
+                ser.write(send_buf.encode())
+                ser.flush()
+                
+                measurement = ser.readline().decode('utf-8').rstrip()
+
+                time.sleep(0.5)
+            
         except:
             pass
          
+        timestamp = datetime.now().timestamp()
+
         # Close the serial port   
         try:
             ser.close()   
@@ -140,10 +158,10 @@ class GravitySensor:
 
         try:
             filename = csv_file_paths["gravity_nh3"]
-            self.write_csv_row_to_file(filename, [timestamp, measurement])
+            self.write_csv_row_to_file(filename, [timestamp, float(measurement)])
         except:
             pass
         
         
-        return measurement
+        return float(measurement)
 
