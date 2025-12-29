@@ -27,9 +27,7 @@ import os
 import numpy as np
 import datetime
 import sys
-import pandas as pd
 import pyqtgraph as pg
-
 import webbrowser
 import inspect
 from types import NoneType, TracebackType
@@ -50,7 +48,7 @@ from queue import Queue
 from Sensors.MyWorker import MeasurementWorker, PlotWorker
 from Sensors.PlotControl import plotter
 from Sensors import constants
-from Sensors.SerialConfiguration import configure_serial
+from Sensors.SerialConfiguration import configure_serial, close_serial
 
 from Analysis import Analysis
 
@@ -214,44 +212,52 @@ class ControlWindow(QtWidgets.QMainWindow, controlWindow.Ui_MainWindow):
                 if settings['cam1']['pos'] is not None:
                     key = settings['cam1']['pos']
                     self.settings['cam1']['pos'] = key
-                    self.set_cam1(self.cameras_pos[key])
-                    self.settings['cam1']['saturation'] = settings['cam1']['saturation']
-                    self.settings['cam1']['brightness'] = settings['cam1']['brightness']
-                    self.settings['cam1']['contrast'] = settings['cam1']['contrast']
-                    self.camOne.imageProcessing().setBrightness(
-                        settings['cam1']['brightness'])
-                    self.camOne.imageProcessing().setSaturation(
-                        settings['cam1']['saturation'])
-                    self.camOne.imageProcessing().setContrast(
-                        settings['cam1']['contrast'])
                     try:
-                        self.settings['cam1']['res_x'] = settings['cam1']['res_x']
-                        self.settings['cam1']['res_y'] = settings['cam1']['res_y']
-                        self.set_res_cam1(
-                            settings['cam1']['res_x'], settings['cam1']['res_y'])
-                    except:
+                        self.set_cam1(self.cameras_pos[key])
+                    except KeyError:
                         pass
+                    else:
+                        self.settings['cam1']['saturation'] = settings['cam1']['saturation']
+                        self.settings['cam1']['brightness'] = settings['cam1']['brightness']
+                        self.settings['cam1']['contrast'] = settings['cam1']['contrast']
+                        self.camOne.imageProcessing().setBrightness(
+                            settings['cam1']['brightness'])
+                        self.camOne.imageProcessing().setSaturation(
+                            settings['cam1']['saturation'])
+                        self.camOne.imageProcessing().setContrast(
+                            settings['cam1']['contrast'])
+                        try:
+                            self.settings['cam1']['res_x'] = settings['cam1']['res_x']
+                            self.settings['cam1']['res_y'] = settings['cam1']['res_y']
+                            self.set_res_cam1(
+                                settings['cam1']['res_x'], settings['cam1']['res_y'])
+                        except:
+                            pass
             if cam == 'cam2':
                 if settings['cam2']['pos'] is not None:
                     key = settings['cam2']['pos']
                     self.settings['cam2']['pos'] = key
-                    self.set_cam2(self.cameras_pos[key])
-                    self.settings['cam2']['saturation'] = settings['cam2']['saturation']
-                    self.settings['cam2']['brightness'] = settings['cam2']['brightness']
-                    self.settings['cam2']['contrast'] = settings['cam2']['contrast']
-                    self.camTwo.imageProcessing().setBrightness(
-                        settings['cam2']['brightness'])
-                    self.camTwo.imageProcessing().setSaturation(
-                        settings['cam2']['saturation'])
-                    self.camTwo.imageProcessing().setContrast(
-                        settings['cam2']['contrast'])
                     try:
-                        self.settings['cam2']['res_x'] = settings['cam2']['res_x']
-                        self.settings['cam2']['res_y'] = settings['cam2']['res_y']
-                        self.set_res_cam2(
-                            settings['cam2']['res_x'], settings['cam2']['res_y'])
-                    except:
+                        self.set_cam2(self.cameras_pos[key])
+                    except KeyError:
                         pass
+                    else:                    
+                        self.settings['cam2']['saturation'] = settings['cam2']['saturation']
+                        self.settings['cam2']['brightness'] = settings['cam2']['brightness']
+                        self.settings['cam2']['contrast'] = settings['cam2']['contrast']
+                        self.camTwo.imageProcessing().setBrightness(
+                            settings['cam2']['brightness'])
+                        self.camTwo.imageProcessing().setSaturation(
+                            settings['cam2']['saturation'])
+                        self.camTwo.imageProcessing().setContrast(
+                            settings['cam2']['contrast'])
+                        try:
+                            self.settings['cam2']['res_x'] = settings['cam2']['res_x']
+                            self.settings['cam2']['res_y'] = settings['cam2']['res_y']
+                            self.set_res_cam2(
+                                settings['cam2']['res_x'], settings['cam2']['res_y'])
+                        except:
+                            pass
 
     def get_cam1(self):
         key, okPressed = QtWidgets.QInputDialog.getItem(
@@ -688,6 +694,7 @@ class HardwareWindow(QtWidgets.QMainWindow, hardwareWindow.Ui_MainWindow):
         self.saved.connect(self.saved_status)
 
         self.analogInputEdit.textEdited.connect(self.change)
+        self.digitalInputEdit.textEdited.connect(self.change)
         self.analogChannelsSpin.valueChanged.connect(self.change)
         self.odourOutputEdit.textEdited.connect(self.change)
         self.syncClockEdit.textEdited.connect(self.change)
@@ -698,17 +705,15 @@ class HardwareWindow(QtWidgets.QMainWindow, hardwareWindow.Ui_MainWindow):
         self.samplingRateEdit.textEdited.connect(self.change)
         self.lickChannelSpin.valueChanged.connect(self.change)
         self.timeoutEdit.textEdited.connect(self.change)
-        self.beamChannelSpin.valueChanged.connect(self.change)
+        self.beamChannelEdit.textEdited.connect(self.change)
         self.lickChannel2Spin.valueChanged.connect(self.change)
-        self.analogInput3Spin.valueChanged.connect(self.change)
-        self.usbBox.stateChanged.connect(self.change)
         self.fvDelayEdit.textEdited.connect(self.change)
-        self.thoraxMonitorDelayEdit.textEdited.connect(self.change)
         self.lickMonitorDelayEdit.textEdited.connect(self.change)
         self.lickrateEdit.textEdited.connect(self.change)
 
     def set_preferences(self, prefs):
         self.analogInputEdit.setText(prefs['analog_input'])
+        self.digitalInputEdit.setText(prefs['digital_input'])
         self.analogChannelsSpin.setValue(prefs['analog_channels'])
         self.odourOutputEdit.setText(prefs['odour_output'])
         self.syncClockEdit.setText(prefs['sync_clock'])
@@ -719,13 +724,9 @@ class HardwareWindow(QtWidgets.QMainWindow, hardwareWindow.Ui_MainWindow):
         self.samplingRateEdit.setText(str(prefs['samp_rate']))
         self.lickChannelSpin.setValue(prefs['lick_channel_l'])
         self.timeoutEdit.setText(str(prefs['timeout']))
-        self.beamChannelSpin.setValue(prefs['beam_channel'])
+        self.beamChannelEdit.setText(prefs['beam_channel'])
         self.lickChannel2Spin.setValue(prefs['lick_channel_r'])
-        self.analogInput3Spin.setValue(prefs['analog_input_3'])
-        self.usbBox.setChecked(prefs['static'])
         self.fvDelayEdit.setText(str(prefs['fv_delay']))
-        self.thoraxMonitorDelayEdit.setText(
-            str(prefs['thorax_delay']))  # TODO Namen ändern
         self.lickMonitorDelayEdit.setText(
             str(prefs['lick_delay']))  # TODO Namen ändern
         self.lickrateEdit.setText(str(prefs['low_lickrate']))
@@ -742,6 +743,7 @@ class HardwareWindow(QtWidgets.QMainWindow, hardwareWindow.Ui_MainWindow):
 
         try:
             prefs = {'analog_input': self.analogInputEdit.text(),
+                     'digital_input': self.digitalInputEdit.text(),
                      'analog_channels': int(self.analogChannelsSpin.value()),
                      'odour_output': self.odourOutputEdit.text(),
                      'reward_output1': self.rewardOutput1Edit.text(),
@@ -750,17 +752,15 @@ class HardwareWindow(QtWidgets.QMainWindow, hardwareWindow.Ui_MainWindow):
                      'finalvalve_output': self.fvOutputEdit.text(),
                      'rfid_port': self.rfidPortEdit.text(),
                      'samp_rate': int(self.samplingRateEdit.text()),
-                     'lick_channel': int(self.lickChannelSpin.value()),
                      'timeout': int(self.timeoutEdit.text()),
-                     'beam_channel': int(self.beamChannelSpin.value()),
+                     'beam_channel': self.beamChannelEdit.text(),
                      'lick_channel_l': int(self.lickChannelSpin.value()),
                      'lick_channel_r': int(self.lickChannel2Spin.value()),
-                     'analog_input_3': int(self.analogInput3Spin.value()),
-                     'static': bool(self.usbBox.isChecked()),
                      'fv_delay': float(self.fvDelayEdit.text()),
-                     'thorax_delay': float(self.thoraxMonitorDelayEdit.text()),
                      'lick_delay': float(self.lickMonitorDelayEdit.text()),
-                     'low_lickrate': float(self.lickrateEdit.text())}
+                     'low_lickrate': float(self.lickrateEdit.text()),
+                     'static': True}
+
         except ValueError:
             QtWidgets.QMessageBox.about(self.parent, "Error",
                                         "A value error has occured")
@@ -1243,16 +1243,16 @@ class SensorsWindow(QtWidgets.QMainWindow, sensorsWindow.Ui_MainWindow):
         self.bu_stop.setEnabled(True)
 
 
-    def stop_worker(self):
+    def stop_worker(self, abandon):
         if self.worker_thread.isRunning():
-            self.worker.stop()   
+            self.worker.stop(abandon)   
             self.bu_stop.setEnabled(False)
             self.bu_start.setEnabled(True)
 
     def closeEvent(self, event):
         print("Shutting down")
-        self.stop_worker()
-        # Serial close required
+        self.stop_worker(abandon=True)
+
         
         
 class SensorConfigWindow(QtWidgets.QWidget):
@@ -1298,6 +1298,10 @@ class SensorConfigWindow(QtWidgets.QWidget):
 
         self.setLayout(main_layout)
         self.setWindowTitle('Sensor Serial Configuration')
+        
+        for sensor_id, com_port in constants.sensor_com_pairs:
+            self.pair_list_widget.addItem(f'Sensor ID: {sensor_id}, COM Port: {com_port}')
+
 
     def add_sensor_com_pair(self):
         """Method to add a sensor/com port pair based on user input
@@ -1318,7 +1322,11 @@ class SensorConfigWindow(QtWidgets.QWidget):
     def clear_list(self):
         """Clear the list widget
         """
+        close_serial()
+        
         constants.sensor_com_pairs.clear()  # Leere die interne Liste
+        constants.SNIds = [1]
+
         self.pair_list_widget.clear()  # Leere das List-Widget
 
     def configure_sensors(self):

@@ -16,6 +16,8 @@
 **/hardware.config
 
 # ignoring virtual environment
+=======
+.venv/
 venv/
 
 # ignoring sphinx build files
@@ -32,3 +34,5 @@ sphinxDoc/build/
 
 *.schedule
 
+NoSeMazeControl/build/
+NoSeMazeControl/dist/

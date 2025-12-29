@@ -8,7 +8,6 @@ from Sensors import constants
 import os
 import threading
 from queue import Queue
-import pandas as pd
 import serial
 from datetime import datetime
 
@@ -51,7 +50,7 @@ class GravitySensor:
                     )
                     output.writerow(file[1])
             except:
-                print("Could not create file")
+                print("Could not create file")    
         
     def recreate_files(self):
         """
@@ -111,7 +110,7 @@ class GravitySensor:
         try:
             ser = serial.Serial(f"COM{constants.gravity_port}", 115200, timeout=1)
         except serial.serialutil.SerialException:
-            print("Could not open port [{}] with gravity sensor".format(constants.gravity_port))
+            print(f"Could not open port COM{constants.gravity_port} with gravity sensor")
 
         # Send the command 'measure' followed by a newline character
         try:

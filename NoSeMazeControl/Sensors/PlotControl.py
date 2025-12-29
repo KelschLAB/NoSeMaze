@@ -30,9 +30,8 @@ class plotter:
         self.graphicsView = graphicsView
         # Names for the graphs
         self.names = ['sound', 'rh', 'als', 'voc_index', 'voc_raw', 'nh3', 'co2', 'temp']
-        self.all_buffers = []
         # How many samples to plot
-        self.buffer_size = 2000
+        self.buffer_size = 1000
         self.curve_items = []
 
         self.graphicsView.setBackground('w')
@@ -160,13 +159,11 @@ class plotter:
 
                 self.data2curve(meas_dict, "curve_voc_raw", "spg", "voc_raw", i)
 
-                # Trim all buffers
-                for buffer in self.all_buffer:
-                    self._trimBuffer(buffer[i], self.buffer_size)
-
-                # Trim all buffers
-                for buffer_t in self.all_buffer_t:
-                    self._trimBuffer(buffer_t[i], self.buffer_size)
+            # Trim all buffers after processing all measurements
+            for j in range(len(constants.SNIds)):
+                for name in self.names:
+                    self._trimBuffer(getattr(self, f'{name}_buffer')[j], self.buffer_size)
+                    self._trimBuffer(getattr(self, f'{name}_buffer_t')[j], self.buffer_size)
 
     def data2curve(self, dict : dict, curve_name : str, sensor_name : str, variable_name : str, i : int):
         """Add the the buffer values to the plot curves
@@ -195,10 +192,14 @@ class plotter:
             buffer_t[i].append(current_time)
         # If new data, append values
         else:
-            self.check_thresholds(dict[sensor_name][variable_name], variable_name)
+            #self.check_thresholds(dict[sensor_name][variable_name], variable_name)
             buffer[i].append(dict[sensor_name][variable_name])
-            buffer_t[i].append(((dict[sensor_name]["timestamp"]))/1000)
             
+            if (((dict[sensor_name]["timestamp"]))/1000) > current_time:
+                buffer_t[i].append(current_time)
+            else:
+                buffer_t[i].append(((dict[sensor_name]["timestamp"]))/1000)
+                
         current_curve.setData( buffer_t[i] , buffer[i])
         
         

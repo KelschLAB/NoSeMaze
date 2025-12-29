@@ -132,6 +132,21 @@ class MainApp(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
         self.actionLoad_Experiment.triggered.connect(self.load_experiment)
         self.saved.connect(self.experiment_saved)
 
+    def start_experiment(self):
+        self.experiment_control.start()
+        self.startButton.setEnabled(False)  # Gray out start button
+        self.startButton.setStyleSheet("border-radius: 4px; border-color: green; background-color: lightgray;")  # Inactive style
+        self.stopButton.setEnabled(True)     # Enable stop button
+        self.stopButton.setStyleSheet("border-radius: 4px; border-color: green; background-color: rgb(255, 168, 165);")  # Active style
+
+    def stop_experiment(self):
+        self.experiment_control.stop()
+        self.stopButton.setEnabled(False)    # Gray out stop button
+        self.stopButton.setStyleSheet("border-radius: 4px; border-color: green; background-color: lightgray;")  # Inactive style
+        self.startButton.setEnabled(True)     # Enable start button
+        self.startButton.setStyleSheet("border-radius: 4px; border-color: green; background-color: lightgreen;")  # Active style
+        
+        
     def setup_experiment_bindings(self, experiment : Experiment.Experiment):
         """
         Set up experiment in the GUI and populate the experiment table in the GUI.
@@ -163,9 +178,14 @@ class MainApp(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
             self.stopButton.disconnect()
         except:
             pass
-        self.startButton.clicked.connect(self.experiment_control.start)
-        self.stopButton.clicked.connect(self.experiment_control.stop)
-
+        
+        self.startButton.clicked.connect(self.start_experiment)
+        self.stopButton.clicked.connect(self.stop_experiment)
+        
+        # Initially set the stop button to be grayed out
+        self.stopButton.setEnabled(False)
+        self.stopButton.setStyleSheet("border-radius: 4px; border-color: green; background-color: lightgray;")
+        
         self.hardware_window.new_pref.connect(
             self.experiment_control.update_pref)
 

@@ -8,9 +8,7 @@ from Sensors import constants
 import os
 import threading
 from queue import Queue
-import pandas as pd
 import random
-
 
 from pathlib import Path
 
@@ -39,8 +37,7 @@ class MeasObj:
         Initializes the node measurement object with the current time and creates a folder with measurements CSVs for each sensornodes in constants
         Folders are not overwritten if they already exist
         """
-        t = time.localtime()
-        self.timestamp = time.strftime("%y%m%d_%H%M", t)
+
 
         self.SensorNodes = []
         # Loop over all sensor IDs
@@ -66,6 +63,12 @@ class MeasObj:
                             output.writerow(file[1])
                     except:
                         print("Could not create file")
+        
+    def __del__(self):
+        for i, SN in enumerate(self.SensorNodes):
+            del SN
+        print("Deleted all nodes")
+     
         
     def recreate_files(self):
         for SNId in constants.SNIds:

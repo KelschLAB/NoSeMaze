@@ -45,6 +45,8 @@ class MeasurementWorker(QObject):
         super().__init__()
         self._paused = True
         self._count = -1
+        self.abandon = False
+        
 
     def start(self):
         """
@@ -57,13 +59,14 @@ class MeasurementWorker(QObject):
         else:
             print('Continue')
 
-    def stop(self, *, abort=False):
+    def stop(self, abandon):
         """
         Stops the worker
 
         Args:
             abort (bool, optional): Aborts thread. Defaults to False.
         """
+        self.abandon = abandon
         self._paused = True
         print('Stopping...')
 
@@ -98,10 +101,25 @@ class MeasurementWorker(QObject):
                 self.progress.emit(self._count)
 
                 result = self.MeasureObj.meas_loop()
-
+                
                 try:
                     self.measurementsReady.emit(result)
-                except TypeError:
+                except TypeError as e:
+                    print(f"Measurement error: {e}")
+
+                if constants.gravity_port:
+                    try:
+                        res = self.GravObj.meas_loop()
+                        self.gravityReady.emit(res)
+                    except TypeError as e:
+                        print(f"Gravity measurement error: {e}")
+                
+                QThread.msleep(5000)
+    
+            elif self.abandon == True:
+                try:
+                    del self.MeasureObj
+                except:
                     pass
                 
                 # If gravity sensor is configured, recieve data from it
