@@ -7,7 +7,7 @@ In total, the Environmental Sensor Module consists of five sensors. Each of them
 2. A CO2 sensor that logs not only the CO2-concentration (ppm) in the air but also the current temperature (°C) and humidity (RH%).
 3. A photodiode to record changes in the light intensity within the habitat. Between each measurement point, only the brightest event is safed.
 4. A VOC sensor that provides guiding values for an easier check on air freshness.
-5. An ammonia sensor which aims to help with fulfilling hygiene requirements when it comes to animal urination by measuring NH3 in the air (ppm).
+5. An ammonia sensor
 
 ![Overview Sensor Elements](/Documentation/_images/EnvironmentalSensorNode.png)
 ## How to set up the Sensor Node
