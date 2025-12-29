@@ -18,9 +18,10 @@ This documentation is meant to help user navigate the [_NoSeMazeControl_](#nosem
   
 ### Introduction {#introduction-nsc}
 
-The NoSeMazeControl serves as a central control for the user to:
+The NoSeMaze software serves as a central hub for the user to:
 
 - start and stop experiment session,
+- create schedules for experiments
 - save and load experiment,
 - view some performance result,
 - and also configure the hardware interface.
