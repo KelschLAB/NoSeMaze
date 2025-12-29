@@ -4,7 +4,7 @@ This folder contains all documentations of NoSeMaze.
 
 Documentations available are:
 
-- [Hardware Reference](./HardwareDocumentation/README.md) - Understanding the required hardware.
+- [Hardware Reference](./HardwareDocumentation/README.md) - Understanding the required hardware
 - [Setup Guide](./Guides/setupGuide.md) - Setup of Nosemaze
 - [User Guide](./Guides/userGuide.md) - How to use the Nosemaze system
 
