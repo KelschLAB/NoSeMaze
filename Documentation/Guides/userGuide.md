@@ -13,9 +13,9 @@ This documentation is meant to help user navigate the [_NoSeMazeControl_](#nosem
   - [Animals Window](#nsc-animals-window)
   - [Analysis Window](#nsc-analysis-window)
   - [Video Control Window](#nsc-video-control-window)
-  - [Sensornode Data Viewer](#Sensornode-Data-Viewer)
 - [Experiment Flowchart](#experiment-flowchart)
-
+- [Sensornode Data Viewer](#Sensornode-Data-Viewer)
+  
 ### Introduction {#introduction-nsc}
 
 The NoSeMazeControl serves as a central control for the user to:
@@ -234,24 +234,6 @@ Number of channels used. This parameter will be used to prepare the data contain
 ##### NI USB 6216 Check Box [3]
 
 Checkbox parameter which indicate that if NI USB 6216 BNC is used or not. In the current version, only NI USB 6216 is supported. The checkbox should be checked.
-
-### Sensornode Data Viewer
-
-If you wish to use the sensornode modules, the received data can be viewed via the Data Viewer.
-
-1. To set up one or multiple Nodes, click Sensornodes->Configure IDs as shown in the graphic below. This will open the "Sensor Serial Configuration" window.
-
-![Sensornode Tab](../_images/Sensornodes_tab.PNG)
-
-2. You can now type in the ID you wish to assign to the sensornode at the respective COM Port the USB is connected to. Add the pairs and finish by clicking "Connect". Alternatively, if only one sensornode is connected you can skip this step by directly going to Sensornodes->Data Viewer.
-
-![Serial Configurator](../_images/SerialConfigurator.PNG)
-
-3. Starting the "Sensornode Data Viewer" will start reading the sensor data and plotting them in the viewer. The data viewer will also automatically safe all data records under NoSeMazeControl/csv/SNID_0x.
-
-At the current state the data viewer should look similar to the image below. Please be aware that not all sensors transmit data at the same time. Sampling time varies between a couple seconds and a few minutes. Calculated VOC values will take the longest to plot as multiple samplings are needed for an accurate measurement.
-
-![Data Viewer](../_images/data_viewer.png)
 
 ### Animals Window {#nsc-animals-window}
 
@@ -748,3 +730,24 @@ A graph to indicate how the odor valves will be controlled.
 ### Known Issues {#nss}
 
 1. Though many inputs are checked before further processing, not all inputs are checked against false input or out-of-range input, which might caused the software to crash.
+
+
+
+
+### Sensornode Data Viewer
+
+If you wish to use the sensornode modules, the received data can be viewed via the Data Viewer.
+
+1. To set up one or multiple Nodes, click Sensornodes->Configure IDs as shown in the graphic below. This will open the "Sensor Serial Configuration" window.
+
+![Sensornode Tab](../_images/Sensornodes_tab.PNG)
+
+2. You can now type in the ID you wish to assign to the sensornode at the respective COM Port the USB is connected to. Add the pairs and finish by clicking "Connect". Alternatively, if only one sensornode is connected you can skip this step by directly going to Sensornodes->Data Viewer.
+
+![Serial Configurator](../_images/SerialConfigurator.PNG)
+
+3. Starting the "Sensornode Data Viewer" will start reading the sensor data and plotting them in the viewer. The data viewer will also automatically safe all data records under NoSeMazeControl/csv/SNID_0x.
+
+At the current state the data viewer should look similar to the image below. Please be aware that not all sensors transmit data at the same time. Sampling time varies between a couple seconds and a few minutes. Calculated VOC values will take the longest to plot as multiple samplings are needed for an accurate measurement.
+
+![Data Viewer](../_images/data_viewer.png)
