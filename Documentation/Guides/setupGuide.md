@@ -103,7 +103,7 @@ The modules are connected to the laptop via USB. It comes with following sensors
 
 ![Sensor Node](/Documentation/_images/Blockschaltbild_Umweltsensorik.png)
 
-The data output can be plotted via the Sensornode Data Viewer. Please check the Data Viewer section of the [User Guide](./userGuide.md) for a more detailed explaination on how to visualize data received by the modules.
+The data output can be plotted via the Sensornode Data Viewer. Please check the Data Viewer section of the [User Guide](./userGuide.md) for a more detailed explaination on how to visualize data received by the modules. In the Nosemaze home folder, a csv folder is created. All measurement datapoints are exported to this folder in a specified intervall.
 
 For a more detailed report on the Sensornode module itself please check [Sensornode Module](./sensornode.md).
 
