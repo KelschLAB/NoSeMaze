@@ -1,5 +1,5 @@
 """
-This module contains a sensornode measurement object to recieve and save sensor data. 
+This module contains a sensornode measurement class to recieve and save sensor data. 
 """
 
 import csv
@@ -34,7 +34,7 @@ class MeasObj:
     
     def __init__(self):
         """
-        Initializes the measurement object and creates a folder with measurements CSVs for each sensornodes in constants
+        Initializes the node measurement object with the current time and creates a folder with measurements CSVs for each sensornodes in constants
         Folders are not overwritten if they already exist
         """
 

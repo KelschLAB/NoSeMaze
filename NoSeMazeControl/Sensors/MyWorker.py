@@ -1,3 +1,6 @@
+"""
+This module contains thread workers to recieve or plot measurement data
+"""
 
 from PyQt5.QtCore import QObject, QThread, pyqtSignal as Signal, pyqtSlot as Slot
 import time
@@ -119,16 +122,19 @@ class MeasurementWorker(QObject):
                 except:
                     pass
                 
-                try:
-                    del self.GravObj
-                except:
-                    pass
+                # If gravity sensor is configured, recieve data from it
+                if constants.gravity_port:
+                    res = self.GravObj.meas_loop()
+                    self.gravityReady.emit(res)
+                    
+                QThread.msleep(1000)
 
             QThread.msleep(100)
 
 
 class PlotWorker(QObject):
-    """Customer Worker class to plot the measurement data
+    """Customer Worker class to plot the measurement data.
+    Recieves signals for plotting sensornode data or displaying gravity NH3 values.
     """
     def __init__(self, graphicsView, label_NH3):
 
