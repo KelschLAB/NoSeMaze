@@ -13,7 +13,7 @@ This documentation is meant to help user navigate the [_NoSeMazeControl_](#nosem
   - [Animals Window](#nsc-animals-window)
   - [Analysis Window](#nsc-analysis-window)
   - [Video Control Window](#nsc-video-control-window)
-  - [Viewing Sensornode Data](#viewing-sensornode-data)
+  - [Sensornode Data Viewer](#Sensornode-Data-Viewer)
 - [Experiment Flowchart](#experiment-flowchart)
 
 ### Introduction {#introduction-nsc}
@@ -235,7 +235,7 @@ Number of channels used. This parameter will be used to prepare the data contain
 
 Checkbox parameter which indicate that if NI USB 6216 BNC is used or not. In the current version, only NI USB 6216 is supported. The checkbox should be checked.
 
-### Viewing Sensornode Data
+### Sensornode Data Viewer
 
 If you wish to use the sensornode modules, the received data can be viewed via the Data Viewer.
 
