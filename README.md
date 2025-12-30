@@ -10,7 +10,7 @@ This is a repository containing the UIs for NoSeMaze and its documentation and g
 
 ### Hardware
 
-The NoSeMaze setup consists of 4 main modules:
+The NoSeMaze setup consists of 3 main modules:
 
 1. The **automatic olfactometer system**, which itself consists of:
     - a lick port and a water container.
@@ -19,12 +19,11 @@ The NoSeMaze setup consists of 4 main modules:
 
 2. **Tube test system**, which is used to determine social hierarchy of a mice cohorte.
 
-3. **Environment sensors module**, which measures temperature, gas, light, etc. to check if there is correlation between the result of the experiment and the environment or to provide additional data points.
+3. **Video cameras** which record areas of interest in the NoSeMaze. Video recorded will be used for tracking the mice using DeepLabCut, whereafter the social interactions between the mice are analysed.
 
-4. **Video cameras** which record areas of interest in the NoSeMaze. Video recorded will be used for tracking the mice using DeepLabCut, whereafter the social interactions between the mice are analysed.
+As an Add-On **Environmental sensors** can be integrated, which measure temperature, gas, light, etc. to check if there is correlation between the result of the experiment and the environment or to provide additional data points.
 
-
-These main parts are connected to a computer running the Nosemaze software (NoSeMazeControl) which controls the experiment and stores the measured data.
+These main modules are connected to a computer running the Nosemaze software (NoSeMazeControl) which controls the experiment and stores the measured data.
 
 > :memo: **Note** :  
 > Only NI-Board NI-USB 6002 is supported by the NoSeMaze Software right now.
