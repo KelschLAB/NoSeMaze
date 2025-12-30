@@ -30,7 +30,7 @@ The trials/trainings executed during the experiment are determined by the schedu
 
 ### Starting The UI {#starting-nsc}
 
-To start the UI, run [_main.py_](../../NoSeMazeControl/main.py) **from** the [_NoSeMazeControl_](../../NoSeMazeControl/) folder using python version 3.10 or above.
+To start the UI, run [_main.py_](../../NoSeMazeControl/main.py) **from** the [_NoSeMazeControl_](../../NoSeMazeControl/) folder using python version 3.10 or above. Alternativlely you can launch the provided .exe in a folder of your choice.
 
 There are some possible ways to start the UI:
 
@@ -54,10 +54,10 @@ To start an experiment, there are several things that must be done first. If the
 1. **Create Schedule**
     Before starting the experiment, create the trials/training schedule necessary for the experiment using the Schedule Generator window. For more details on how to create a schedule, see [NoSeMazeSchedule guide](#nosemazeschedule).
     </br>
-    > :exclamation: **Important** : The Schdule Generator used to be seperate from the NoSeMazeControl UI and was the NoSeMazeSchedule UI. However in the new NoSeMaze Setup the Schedule Generator is built in to the NoSeMazeControl UI. It is found inthe animals dropdown menu under Schedule ([Fig. 1](#main-window-nsc-main-window)).
+    > :exclamation: **Important** : The Schdule Generator used to be seperate from the NoSeMazeControl UI and was the NoSeMazeSchedule UI. However in the new NoSeMaze Setup the Schedule Generator is built in to the NoSeMazeControl UI. It is found in the Experiment dropdown menu under Schedules ([Fig. 1](#main-window-nsc-main-window)).
 
 2. **Populating animal List**
-    The animal list must be populated with the RFID tag of the animals before starting the experiment. Populating animal list is done in the animal window.
+    The animal list must be populated with the RFID tag of the animals before starting the experiment. Populating animal list is done in the Experiment - Animal List window.
     </br>
     > :exclamation: **Important** : There will be a _'default'_ animal available in the animal list. The _'default'_ animal will be used as a fallback dummy animal, if the rfid tag of an animal can not be read successfully.
     >
@@ -65,11 +65,11 @@ To start an experiment, there are several things that must be done first. If the
 
     Step by step instruction:
 
-    1. Click _animal list_ in _Animals_ menu in the menu bar to open the animal window.
+    1. Click _Animal List_ in _Experiment_ menu in the menu bar
     2. There will be a _'default'_ animal available in the animal list (Number 1 on [Fig. 3](#animals-window-nsc-animals-window)). To add an animal, click the _add_ button (plus button in number 2 on [Fig. 3](#animals-window-nsc-animals-window)). A new row will be added in the table.
     3. Double click the cell of the new row and write the RFID tag of the animal. After that click outside of the cell to exit cell editing.
     > :memo: **Hint** : the written RFID will not yet be registered in the table before the cursor exit cell editing.
-    4. Update the animal table by clicking _update list_ &rarr; _confirm_. Only saved animal RFID in the table can be assigned schedules.
+    4. Store the animal table by clicking Confirm Animals_ &rarr; _confirm_. Only now schedules can be assigned.
 
 3. **Assigning Schedule**
     After populating the table, assign the schedule for each animal.
@@ -93,15 +93,13 @@ To start an experiment, there are several things that must be done first. If the
 5. **Choose notification folder path**
     There will be messages that are saved in the notification folder path, e.g. a deadman's switch notification or software crash notification.
 
-    > :memo: **Tip** : Choosing a cloud/synchronised folder as message folder will enable the user to monitor the experiment setup from remote workplace.
-
     Step by step instruction:
     1. To define the folder path, click _Notification_ &rarr; _Message Folder_. An file dialog window will be opened.
     2. Choose the folder which the messages should be written in.
     </br>
 
 6. **Configure the hardware preferences** (optional)
-    There might be some configuration that need to be done, such as, which analog input channel of the NI board used to detect licks. For more information, see **[Hardware&nbsp;Preference&nbsp;Window](#hardware-preference-window-nsc-hardware-preference-window)** in **[UI&nbsp;Description](#ui-descriptions-ui-nsc)**
+    There might be some configuration that needs to be done, such as, which analog input channel of the NI board is used to detect licks. For more information, see **[Hardware&nbsp;Preference&nbsp;Window](#hardware-preference-window-nsc-hardware-preference-window)** in **[UI&nbsp;Description](#ui-descriptions-ui-nsc)**
 
 ### Starting The Experiment
 
@@ -127,25 +125,17 @@ _**Fig. 1:** Main Window of NoSeMazeControl UI._
 
 Menu for saving and loading experiments.
 
+##### Experiment
+
+Menu for planning an experiment with schedules and animals.
+
 ##### Hardware
 
-Menu for opening hardware preference window.
+Menu for opening hardware preference and video window.
 
-##### Animals
+##### Notifications
 
-Menu for opeing animal list window.
-
-##### Analysis
-
-Menu for opening analysis window.
-
-##### Notification
-
-Menu for editing mailing list and message folder.
-
-##### Video
-
-Menu for opening video control window.
+Menu for editing mailing list (disabled) and message folder.
 
 ##### Help {#nsc}
 
@@ -153,7 +143,7 @@ Menu for opening user guide in a browser and for opening about window.
 
 ##### Control Panel (1)
 
-Control panel for the exeperimentator to start or stop the experiment.
+Control panel to start or stop the experiment.
 
 ##### Experiment Info (2)
 
