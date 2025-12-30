@@ -31,7 +31,8 @@ These main modules are connected to a computer running the Nosemaze software (No
 For more information about the hardware, see the following documentations:
 
 - [Hardware Reference](/Documentation/HardwareDocumentation/README.md) - Reference to hardware specification.
-- [NoSeMaze Setup](/Documentation/Guides/setupGuide.md) - Overview of the setup and guide to setting up the system, including some information to some troubleshooting.
+- [NoSeMaze Setup](/Documentation/Guides/setupGuide.md) - Overview of the wiring configuration and guide to setting up the system, including some information to some troubleshooting.
+- [NoSeMaze User Guide](/Documentation/Guides/userGuide.md) - How to use the software to conduct experiments
 
 ### Software
 
