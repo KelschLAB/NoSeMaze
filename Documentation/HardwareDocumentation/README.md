@@ -10,16 +10,19 @@ Following are the subsystems with each hardware used in the setup.
 
 ### 1. Computer
 
-The NoSeMaze was developed using a WindowsNT operating system. The system might not be portable to older Windows OS or other OS.
+The NoSeMaze was developed using a Windows 10 operating system. The system might not be portable to older Windows OS or other OS. 
 
 ### 2. National Instrument Data Acquisition Board
 
-The board used to control the setup and acquire data is NI-USB 6216 BNC.
+The board used to control the setup and acquire data is  NI-USB 6002 ( previously NI-USB 6216 BNC).
 
-> :memo: __Memo__ : As the actual version, the software was developed specific to NI-USB 6216 without portability to other platform.
+> :memo: __Memo__ : As the actual version, the software was developed specific to NI-USB 6002 without portability to other platforms.
 
-For more information about the NI-USB 6216 BNC, please refer to the data sheet of NI-USB 6216 BNC from National Instruments.
-For more information about how the NI-USB 6216 BNC can be programmed, please refer to NIDAQmx or PyDAQmx or NI-MAX.
+For more information about the NI-USB 6002, please refer to the data sheet of NI-USB 6002 from National Instruments.
+For more information about how the NI-USB 6002 can be programmed, please refer to NIDAQmx or PyDAQmx or NI-MAX.
+
+> :exclamation: **Important** :  
+> The wiring diagrams are currently outdated and show the NI-USB 6216 BNC
 
 ### 3. Olfactometer and Reward System
 
