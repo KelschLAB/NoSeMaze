@@ -737,4 +737,6 @@ If you wish to use the sensornode modules, the received data can be viewed via t
 
 At the current state the data viewer should look similar to the image below. Please be aware that not all sensors transmit data at the same time. Sampling time varies between a couple seconds and a few minutes. Calculated VOC values will take the longest to plot as multiple samplings are needed for an accurate measurement.
 
+Sensornodes can be unplugged and reconnected without issues. If the software crashes for some reason, sometimes Windows will block the required USB COM port until it is manually closed. If a COM port can not be opened, open the device manager and force disable the port, then reconnect the sensornode.
+
 ![Data Viewer](../_images/data_viewer.png)
