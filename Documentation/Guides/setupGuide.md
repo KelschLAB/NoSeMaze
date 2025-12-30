@@ -98,8 +98,8 @@ The tube test consists of:
 The RFID antennae are placed like shown in figure 7. Then, the anntennae are connected to their RFID decoder respectively. Here we use 4 RFID decoder for each antenna which are daisy chained using RS485 protocoll. The end of the daisy chain is RFID decoder 4 and the start of the chain is RFID decoder 1. Then RFID decoder is connected to an RS485/USB adapter, which itself is connected to the computer via USB. A separate UI from the rfid decoder vendors was provided to record all timestamps and RFID tag read from the antenna.
 
 ## Environment Sensor Module
-The environment sensor modules are ideally placed on the side walls of the feeding and nesting areas.
-The modules are connected to the laptop via USB. It comes with following sensors: ALS, NH3, CO2, temperature, humidity and sound aswell as VOC index values. All sensor values can be read via the user interface in the sensor data tab. The graphic below shows their communication connection.
+The environment sensor modules are ideally placed on the side walls of the feeding and nesting areas. They should not be reachable by the mice.
+The modules are connected to a laptop via USB or a USB hub. It comes with following sensors: ALS, NH3, CO2, temperature, humidity and sound aswell as VOC index values. All sensor values can be read via the user interface in the sensor data tab. The graphic below shows their onboard communication connection.
 
 ![Sensor Node](/Documentation/_images/Blockschaltbild_Umweltsensorik.png)
 
