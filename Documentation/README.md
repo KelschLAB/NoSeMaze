@@ -2,12 +2,6 @@
 
 This folder contains all documentations of NoSeMaze.
 
-Documentations available are:
-
-- [Hardware Reference](./HardwareDocumentation/README.md) - Understanding the required hardware
-- [Setup Guide](./Guides/setupGuide.md) - Setup of Nosemaze
-- [User Guide](./Guides/userGuide.md) - How to use the Nosemaze system
-
 ## License
 
 The documentations of NoSeMaze, including hardware documentation, images and guides, are free documentation: you can redistribute it and/or modify it under the terms of GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) at any later version.
