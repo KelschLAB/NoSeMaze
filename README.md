@@ -15,18 +15,19 @@ The NoSeMaze setup consists of 4 main modules:
 1. The **automatic olfactometer system**, which itself consists of:
     - a lick port and a water container.
     - an olfactometer and its tubing system.
-    - a National Instrument Data Acquisition Board NI-USB 6216 BNC
+    - a National Instrument Data Acquisition Board NI-USB 6002 (previously NI-USB 6216 BNC)
 
 2. **Tube test system**, which is used to determine social hierarchy of a mice cohorte.
 
-3. **Environment sensors module**, which measures temperature, gas, light, etc. to check if there is correlation between the result of the experiment and the environment.
+3. **Environment sensors module**, which measures temperature, gas, light, etc. to check if there is correlation between the result of the experiment and the environment or to provide additional data points.
 
 4. **Video cameras** which record areas of interest in the NoSeMaze. Video recorded will be used for tracking the mice using DeepLabCut, whereafter the social interactions between the mice are analysed.
 
-> :memo: **Note** :  
-> Only NI-Board NI-USB 6216 BNC is supported by the NoSeMazeControl UI right now.
 
-These main parts are connected to a computer which controls the experiment and gather the measured data.
+These main parts are connected to a computer running the Nosemaze software (NoSeMazeControl) which controls the experiment and stores the measured data.
+
+> :memo: **Note** :  
+> Only NI-Board NI-USB 6002 is supported by the NoSeMaze Software right now.
 
 For more information about the hardware, see the following documentations:
 
@@ -35,17 +36,21 @@ For more information about the hardware, see the following documentations:
 
 ### Software
 
-This repository consists of 2 main folders:
+NoSeMazeControl offers an UI for planning and running experiments.
 
-- NoSeMazeControl &rarr; UI for running experiment.
-- NoSeMazeSchedule &rarr; UI for creating schedule used in experiment.
+NoSeMazeSchedule is now integrated into NoSeMazeControl and offers UI tabs for creating schedules used in these experiments.
 
-The UIs are written in **Python** and can be runned directly using python v3.10+ by running [*main.py*](/NoSeMazeControl/main.py) in NoSeMazeControl or [*schedule_main.py*](/NoSeMazeSchedule/scheduleMain.py) in NoSeMazeSchedule with the [required python packages](/pythonRequirements.txt) installed. To install the packages required, use the `pip install -r pythonRequirements.txt` or `pip3 install -r pythonRequirements.txt` on MacOS/Linux.
+To run NoSeMaze you have two options:
+- Cloning the repository and launching main.py
+- Downloading the .exe for direct execution
+
+The UIs are written in **Python** and can be runned and developed directly using python v3.10+ by running [*main.py*](/NoSeMazeControl/main.py) in NoSeMazeControl with the [required python packages](/pythonRequirements.txt) installed. To install the packages required, use the `pip install -r pythonRequirements.txt` or `pip3 install -r pythonRequirements.txt` on MacOS/Linux. 
+
+A bundled and executable .exe is also available, this does not require the python packages.
 
 > :exclamation: **Important** :  
-> The UI use PyDAQmx as a python wrapper for niDAQmx library, which is distributed together with the NI Board. Make sure niDAQmx is installed before running the UI.
+> The UI always requires PyDAQmx as a python wrapper for niDAQmx library, which is distributed together with the NI Board. Make sure niDAQmx is installed before running the UI.
 
-For software documentations of the UI, see [Software Documentation](/Documentation/SoftwareDocumentation/README.md).
 
 ## User Guide
 
