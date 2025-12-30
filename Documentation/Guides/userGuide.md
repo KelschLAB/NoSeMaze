@@ -4,19 +4,19 @@ This documentation is meant to help user navigate the [_NoSeMazeControl_](#nosem
 
 ## NoSeMazeControl
 
-- [Introduction](#introduction-nsc)
-- [Starting The UI](#starting-nsc)
-- [Starting An Experiment](#starting-an-experiment)
-- [UI Descriptions](#ui-nsc)
-  - [Main Window](#nsc-main-window)
-  - [Hardware Preference Window](#nsc-hardware-preference-window)
-  - [Animals Window](#nsc-animals-window)
-  - [Analysis Window](#nsc-analysis-window)
-  - [Video Control Window](#nsc-video-control-window)
-- [Experiment Flowchart](#experiment-flowchart)
+- [Introduction](#Introduction)
+- [Starting The UI](#Starting-The-Ui)
+- [Starting An Experiment](#Starting-An-Experiment)
+- [UI Descriptions](#Ui-Descriptions)
+  - [Main Window](#Main-Window)
+  - [Hardware Preference Window](#Hardware-Preference-Window)
+  - [Animals Window](#Animals-Window)
+  - [Analysis Window](#Analysis-Window)
+  - [Video Control Window](#Video-Control-Window)
+- [Experiment Flowchart](#Experiment-Flowchart)
 - [Sensornode Data Viewer](#Sensornode-Data-Viewer)
   
-### Introduction {#introduction-nsc}
+### Introduction
 
 The NoSeMaze software serves as a central hub for the user to:
 
@@ -28,7 +28,7 @@ The NoSeMaze software serves as a central hub for the user to:
 
 The trials/trainings executed during the experiment are determined by the schedules assigned to each animal. More about trials and schedule will be discussed later.
 
-### Starting The UI {#starting-nsc}
+### Starting The UI 
 
 To start the UI, run [_main.py_](../../NoSeMazeControl/main.py) **from** the [_NoSeMazeControl_](../../NoSeMazeControl/) folder using python version 3.10 or above. Alternativlely you can launch the provided .exe in a folder of your choice.
 
@@ -113,9 +113,9 @@ The experiment will be saved automatically after each 10 trials done by any anim
 
 To stop the experiment, click the **Stop** button in the **control panel** (numbered 1 on [Fig. 1](#main-window-nsc-main-window)).
 
-### UI Descriptions {#ui-nsc}
+### UI Descriptions 
 
-#### Main Window {#nsc-main-window}
+#### Main Window 
 
 ![main window](../_images/Main_Window_NoSeMaze_new.PNG)
 
@@ -137,7 +137,7 @@ Menu for opening hardware preference and video window.
 
 Menu for editing mailing list (disabled) and message folder.
 
-##### Help {#nsc}
+##### Help
 
 Menu for opening user guide in a browser and for opening about window.
 
@@ -159,19 +159,19 @@ The table shows the results of the trials of every animals in animal list.
 
 The plots shows analog data of lick sensors and signals that is used to control the odor vents. This plot can be used to quickly view when the nozzle are licked compared to the odor presentation.
 
-#### Hardware Preference Window {#nsc-hardware-preference-window}
+#### Hardware Preference Window
 
 ![hardware preference window](../_images/Hardware_Preferences_Window_NoSeMaze_new.PNG)
 
 _**Fig. 2:** Hardware Preference Window of NoSeMazeControl UI._
 
-##### File {#hpw}
+##### File 
 
 Menu for saving the hardware preferences.
 
-##### Hardware Preferences Parameters [1]
+##### Hardware Preferences Parameters 
 
-The parameters used in the experiment.
+The input and output ports used in the experiments. Can be reconfigued as long as the NI-USB 6002 is used.
 
 1. Analog input device
     : NI device used for analog input. NI use a path-like description to describe the devices and the channels. Fig. 2 shows that the device name is "Dev1" and channels 0 to 3 from "ai" or analog input is used.
@@ -207,7 +207,7 @@ The parameters used in the experiment.
     : Threshold in number of licks to consider if a trial is responded or not.
 
 12. Beam channel
-    : Channel number in analog input used as beam sensor input.
+    : Channel number in digital input used as beam sensor input.
 
 13. Lick channel left
     : Channel number in analog input used as lick sensor input considered from the left nozzle.
@@ -218,25 +218,25 @@ The parameters used in the experiment.
 15. Timeout
     : Delay in seconds after a trial before a new trial begins if the trial beforehand was resulted in a miss (animal licked to not rewarded odor).
 
-##### Number of Channels [2]
+##### Analog Input Channels
 
-Number of channels used. This parameter will be used to prepare the data container.
+Number of analog input channels used. This parameter will be used to prepare a data container.
 
-##### NI USB 6216 Check Box [3]
+##### Odour Output Channels
 
-Checkbox parameter which indicate that if NI USB 6216 BNC is used or not. In the current version, only NI USB 6216 is supported. The checkbox should be checked.
+Number of odour output channels used. This parameter will be used to prepare a data container.
 
-### Animals Window {#nsc-animals-window}
+### Animals Window 
 
-![animals window](../_images/nscAnimalsWindowIndexed.png)
+![animals window](../_images/nscAnimalsWindowIndexed.PNG)
 
 _**Fig. 3:** Animals Window of NoSeMazeControl UI._
 
-##### Update List
+##### Confirm Animals
 
 Menu to save the updated list. The list that has been made in animal list should alway be saved first before populating the animal list with schedule.
 
-##### Animal List [1] {#aniw-animal-list}
+##### Animal List [1]
 
 The animal list in the experiment. 'default' animal must alway be available and populated with a schedule which the animal should follow to in case that the RFID from the animal could not be read properly.
 
@@ -252,13 +252,13 @@ The table which shows the schedule assigned to an animal. The assigned schedules
 
 The table which shows the trials planned in the selected schedule. If a schedule in schedule table is selected, this table shows the trials planned in the schedule.
 
-#### Analysis Window {#nsc-analysis-window}
+#### Analysis Window
 
 ![analysis window](../_images/nscAnalysisWindowIndexed.PNG)
 
 _**Fig. 4:** Analysis Window of NoSeMazeControl UI._
 
-##### Animal List [1] {#anaw-animal-list}
+##### Animal List [1] 
 
 The animal list as inputed in animal list window.
 
@@ -270,7 +270,7 @@ Bin size used to smooth the curve.
 
 Performance curve of the animal. Two curves are shown, an individual performance curve and the group mean perfomance curve.
 
-#### Video Control Window {#nsc-video-control-window}
+#### Video Control Window 
 
 ![video control window](../_images/nscVideoControlWindowIndexed.PNG)
 
@@ -360,10 +360,6 @@ flowchart TD
 
 _**Fig. 7:** Experiment flow from before starting an experiment to the end of an experiment._
 
-### Known Issues {#nsc}
-
-1. Closing the main window before stopping the experiment might cause the main window to hang for some time due to main window exterminating the experiment thread in a _"close"_ event.
-
 ## NoSeMazeSchedule
 
 - [Introduction](#introduction-nss)
@@ -371,9 +367,9 @@ _**Fig. 7:** Experiment flow from before starting an experiment to the end of an
 - [Schedule Generator Window Descriptions](#nss-ui-descriptions)
   - [Main Window](#nss-main-window)
 
-### Introduction {#introduction-nss}
+### Introduction 
 
-The NoSeMazeSchedule serves as a tool to build schedules within the NoSeMazeControl. Developer can also build their custom widget e.g. with custom parameters for a custom trial as the widget build has a specific trial/training in mind. Please make sure to implement the trial/training also in NoSeMazeControl [ExperimentControl.py](../../NoSeMazeControl/Controllers/ExperimentControl.py) and [DAQ.py](../../NoSeMazeControl/daqface/DAQ.py).
+The Schedule builder serves as a tool to build schedules within NoSeMazeControl. Developers can also build custom widgets e.g. with custom parameters for a custom trial as the widget build has a specific trial/training in mind. Please make sure to implement the trial/training also in NoSeMazeControl [ExperimentControl.py](../../NoSeMazeControl/Controllers/ExperimentControl.py) and [DAQ.py](../../NoSeMazeControl/daqface/DAQ.py).
 
 ### Creating A Schedule
 
