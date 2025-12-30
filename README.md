@@ -26,7 +26,7 @@ As an Add-On **Environmental sensors** can be integrated, which measure temperat
 These main modules are connected to a computer running the Nosemaze software (NoSeMazeControl) which controls the experiment and stores the measured data.
 
 > :memo: **Note** :  
-> Only NI-Board NI-USB 6002 is supported by the NoSeMaze Software right now.
+> Only the NI-Board NI-USB 6002 is supported by the NoSeMaze Software right now.
 
 For more information about the hardware, see the following documentations:
 
@@ -65,7 +65,7 @@ You should have received a copy of the GNU General Public License along with NoS
 
 ## Changes From AutonoMouse
 
-NoSeMaze is based on AutonoMouse from Andrew Erskine. Changes that is made to meet our requirements include:
+NoSeMaze is based on AutonoMouse from Andrew Erskine. Major changes that are made to meet our requirements include:
 
 1. Putting `daqface` and `PyPulse` together with `autonomouse-control`.
 2. Putting `PyPulse` together with `autonomouse-schedule`.
@@ -73,4 +73,3 @@ NoSeMaze is based on AutonoMouse from Andrew Erskine. Changes that is made to me
 4. Implementing more trials in `daqface` and `ExperimentControl`.
 5. Modifying `PyPulse` in `autonomouse-control` and `autonomouse-schedule`.
 
-For a more detailed change log, see [changelog](./Documentation/CHANGELOG.md).
