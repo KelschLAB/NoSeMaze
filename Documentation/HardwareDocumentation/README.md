@@ -89,9 +89,10 @@ Four antennae are used to detect animal activities by two tubes. Antenna used ar
 
 Four decoders are connected using RS485 protocol in a chain. The first decoder in the chain is connected via a RS485-to-USB adapter to the computer. The first and the last decoder of the chain might need to be connected with a pull-up/pull-down resistor. For more information about the resistor, please refer to data sheet of the RFID decoder from DorsetID.
 
-## Environment Sensor Module
+## Environment Sensors 
 
-Environment sensor module is provided by Fraunhofer-Institute for Manufacturing Engineering and Automation - Clinical Health Technologies in Mannheim. For more information, please contact Jan Ringkamp (jan.ringkamp@ipa.fraunhofer.de).
+The sensor modules are provided by Fraunhofer-Institute for Manufacturing Engineering and Automation - Clinical Health Technologies in Mannheim. 
+If you want to manufacturer or purchase these modules, please contact Philipp Lebhardt (philipp.lebhardt@ipa.fraunhofer.de).
 
 ## Video Cameras for Analysis with Video Tracking
 
